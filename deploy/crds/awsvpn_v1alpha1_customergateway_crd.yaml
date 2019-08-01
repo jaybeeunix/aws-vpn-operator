@@ -1,0 +1,93 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: customergateways.awsvpn.openshift.io
+spec:
+  group: awsvpn.openshift.io
+  names:
+    kind: CustomerGateway
+    listKind: CustomerGatewayList
+    plural: customergateways
+    singular: customergateway
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          properties:
+            bgpAsn:
+              description: 'The Border Gateway Protocol (BGP) Autonomous System Number
+                (ASN) of your customer gateway. You can use an existing ASN assigned
+                to your network. If you do not have one, you can use a private ASN
+                in the 64512-65534 range. Default: 65000'
+              format: int64
+              type: integer
+            name:
+              description: Name for the Customer Gateway.
+              type: string
+            publicIP:
+              description: Specify the Internet-routable IP address for your gateway's
+                external interface; the address must be static and may be behind a
+                device performing network address translation (NAT).
+              type: string
+            type:
+              description: The type of VPN connection that this customer gateway supports
+                (ipsec.1).
+              type: string
+          required:
+          - name
+          - publicIP
+          - type
+          type: object
+        status:
+          properties:
+            bgpAsn:
+              description: The customer gateway's Border Gateway Protocol (BGP) Autonomous
+                System Number (ASN).
+              type: string
+            customerGatewayId:
+              description: The ID of the customer gateway.
+              type: string
+            ipAddress:
+              description: The Internet-routable IP address of the customer gateway's
+                outside interface.
+              type: string
+            state:
+              description: The current state of the customer gateway.
+              type: string
+            tags:
+              description: Tags assigned to the customer gateway.
+              items:
+                properties:
+                  key:
+                    description: The key of the tag.
+                    type: string
+                  value:
+                    description: The value of the tag.
+                    type: string
+                type: object
+              type: array
+            type:
+              description: The type of VPN connection the customer gateway supports
+                (ipsec.1).
+              type: string
+          type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
