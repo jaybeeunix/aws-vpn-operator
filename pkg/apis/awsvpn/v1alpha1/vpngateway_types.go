@@ -18,9 +18,15 @@ type VpnGatewaySpec struct {
 // VpnGatewayStatus defines the observed state of VpnGateway
 // +k8s:openapi-gen=true
 type VpnGatewayStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
-	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
+	// Phase is the current status of the VPN Gateway
+	// +kubebuilder:validation:Enum=Creating,Detached,Ready
+	Phase string `json:"phase,omitempty"`
+
+	// VpnGatewayID is the AWS ID of the VPN Gateway object
+	VpnGatewayID string `json:"vpnGatewayID,omitempty"`
+
+	// VpcID is the AWS ID of the VPC that the VPN Gateway is attempting to attach to
+	VpcID string `json:"vpcID,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
