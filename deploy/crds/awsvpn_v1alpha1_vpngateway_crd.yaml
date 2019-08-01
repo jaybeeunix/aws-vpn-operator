@@ -30,6 +30,21 @@ spec:
         spec:
           type: object
         status:
+          properties:
+            phase:
+              description: Phase is the current status of the VPN Gateway
+              enum:
+              - Creating
+              - Detached
+              - Ready
+              type: string
+            vpcID:
+              description: VpcID is the AWS ID of the VPC that the VPN Gateway is
+                attempting to attach to
+              type: string
+            vpnGatewayID:
+              description: VpnGatewayID is the AWS ID of the VPN Gateway object
+              type: string
           type: object
   version: v1alpha1
   versions:
