@@ -21,16 +21,6 @@ spec:
           - aws-vpn-operator
           imagePullPolicy: Always
           env:
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: aws-vpn-operator-credentials
-                  key: aws_access_key_id
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: aws-vpn-operator-credentials
-                  key: aws_secret_access_key
             - name: WATCH_NAMESPACE
               valueFrom:
                 fieldRef:

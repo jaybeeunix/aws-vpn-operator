@@ -19,6 +19,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
 var log = logf.Log.WithName("controller_vpngateway")
@@ -131,25 +132,39 @@ func (r *ReconcileVpnGateway) Reconcile(request reconcile.Request) (reconcile.Re
 	return reconcile.Result{}, nil
 }
 
-// newPodForCR returns a busybox pod with the same name/namespace as the cr
-func newPodForCR(cr *awsvpnv1alpha1.VpnGateway) *corev1.Pod {
-	labels := map[string]string{
-		"app": cr.Name,
-	}
-	return &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      cr.Name + "-pod",
-			Namespace: cr.Namespace,
-			Labels:    labels,
-		},
-		Spec: corev1.PodSpec{
-			Containers: []corev1.Container{
-				{
-					Name:    "busybox",
-					Image:   "busybox",
-					Command: []string{"sleep", "3600"},
-				},
+func newEc2Client(kubeClient client.Client, namespace, region string) (*EC2, error) {
+	awsConfig := &aws.Config{Region: aws.String(region)}
+
+	secretName := "aws-vpn-operator-credentials"
+		secret := &corev1.Secret{}
+		err := kubeClient.Get(context.TODO(),
+			types.NamespacedName{
+				Name:      secretName,
+				Namespace: namespace,
 			},
-		},
+			secret)
+		if err != nil {
+			return nil, err
+		}
+		accessKeyID, ok := secret.Data[awsCredsSecretIDKey]
+		if !ok {
+			return nil, fmt.Errorf("AWS credentials secret %v did not contain key %v",
+				secretName, awsCredsSecretIDKey)
+		}
+		secretAccessKey, ok := secret.Data[awsCredsSecretAccessKey]
+		if !ok {
+			return nil, fmt.Errorf("AWS credentials secret %v did not contain key %v",
+				secretName, awsCredsSecretAccessKey)
+		}
+
+		awsConfig.Credentials = credentials.NewStaticCredentials(
+			string(accessKeyID), string(secretAccessKey), "")
+
+	// Otherwise default to relying on the IAM role of the masters where the actuator is running:
+	s, err := session.NewSession(awsConfig)
+	if err != nil {
+		return nil, err
 	}
+
+	return ec2.New(s), nil
 }

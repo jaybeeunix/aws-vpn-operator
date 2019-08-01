@@ -11,12 +11,12 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
-		"./pkg/apis/awsvpn/v1alpha1.CustomerGateway":       schema_pkg_apis_awsvpn_v1alpha1_CustomerGateway(ref),
-		"./pkg/apis/awsvpn/v1alpha1.CustomerGatewaySpec":   schema_pkg_apis_awsvpn_v1alpha1_CustomerGatewaySpec(ref),
-		"./pkg/apis/awsvpn/v1alpha1.CustomerGatewayStatus": schema_pkg_apis_awsvpn_v1alpha1_CustomerGatewayStatus(ref),
-		"./pkg/apis/awsvpn/v1alpha1.VpnGateway":            schema_pkg_apis_awsvpn_v1alpha1_VpnGateway(ref),
-		"./pkg/apis/awsvpn/v1alpha1.VpnGatewaySpec":        schema_pkg_apis_awsvpn_v1alpha1_VpnGatewaySpec(ref),
-		"./pkg/apis/awsvpn/v1alpha1.VpnGatewayStatus":      schema_pkg_apis_awsvpn_v1alpha1_VpnGatewayStatus(ref),
+		"github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.CustomerGateway":       schema_pkg_apis_awsvpn_v1alpha1_CustomerGateway(ref),
+		"github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.CustomerGatewaySpec":   schema_pkg_apis_awsvpn_v1alpha1_CustomerGatewaySpec(ref),
+		"github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.CustomerGatewayStatus": schema_pkg_apis_awsvpn_v1alpha1_CustomerGatewayStatus(ref),
+		"github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.VpnGateway":            schema_pkg_apis_awsvpn_v1alpha1_VpnGateway(ref),
+		"github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.VpnGatewaySpec":        schema_pkg_apis_awsvpn_v1alpha1_VpnGatewaySpec(ref),
+		"github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.VpnGatewayStatus":      schema_pkg_apis_awsvpn_v1alpha1_VpnGatewayStatus(ref),
 	}
 }
 
@@ -47,19 +47,19 @@ func schema_pkg_apis_awsvpn_v1alpha1_CustomerGateway(ref common.ReferenceCallbac
 					},
 					"spec": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("./pkg/apis/awsvpn/v1alpha1.CustomerGatewaySpec"),
+							Ref: ref("github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.CustomerGatewaySpec"),
 						},
 					},
 					"status": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("./pkg/apis/awsvpn/v1alpha1.CustomerGatewayStatus"),
+							Ref: ref("github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.CustomerGatewayStatus"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"./pkg/apis/awsvpn/v1alpha1.CustomerGatewaySpec", "./pkg/apis/awsvpn/v1alpha1.CustomerGatewayStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+			"github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.CustomerGatewaySpec", "github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.CustomerGatewayStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
 	}
 }
 
@@ -160,7 +160,7 @@ func schema_pkg_apis_awsvpn_v1alpha1_CustomerGatewayStatus(ref common.ReferenceC
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Ref: ref("./pkg/apis/awsvpn/v1alpha1.Tag"),
+										Ref: ref("github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.Tag"),
 									},
 								},
 							},
@@ -170,7 +170,7 @@ func schema_pkg_apis_awsvpn_v1alpha1_CustomerGatewayStatus(ref common.ReferenceC
 			},
 		},
 		Dependencies: []string{
-			"./pkg/apis/awsvpn/v1alpha1.Tag"},
+			"github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.Tag"},
 	}
 }
 
@@ -201,19 +201,19 @@ func schema_pkg_apis_awsvpn_v1alpha1_VpnGateway(ref common.ReferenceCallback) co
 					},
 					"spec": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("./pkg/apis/awsvpn/v1alpha1.VpnGatewaySpec"),
+							Ref: ref("github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.VpnGatewaySpec"),
 						},
 					},
 					"status": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("./pkg/apis/awsvpn/v1alpha1.VpnGatewayStatus"),
+							Ref: ref("github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.VpnGatewayStatus"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"./pkg/apis/awsvpn/v1alpha1.VpnGatewaySpec", "./pkg/apis/awsvpn/v1alpha1.VpnGatewayStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+			"github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.VpnGatewaySpec", "github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.VpnGatewayStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
 	}
 }
 
