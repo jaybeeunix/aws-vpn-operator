@@ -1,0 +1,7 @@
+apiVersion: awsvpn.openshift.io/v1alpha1
+kind: CustomerGateway
+metadata:
+  name: example-customergateway
+spec:
+  # Add fields here
+  size: 3
