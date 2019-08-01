@@ -17,6 +17,9 @@ type CustomerGatewaySpec struct {
 	// Name for the Customer Gateway.
 	Name string `json:"name"`
 
+	// AWS Region for the Customer Gateway.
+	Region string `json:"region"`
+
 	// Specify the Internet-routable IP address for your gateway's external interface; the address must be static and may be behind a device performing network address translation (NAT).
 	PublicIP string `json:"publicIP"`
 

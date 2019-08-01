@@ -73,6 +73,13 @@ func schema_pkg_apis_awsvpn_v1alpha1_CustomerGatewaySpec(ref common.ReferenceCal
 							Format:      "",
 						},
 					},
+					"region": {
+						SchemaProps: spec.SchemaProps{
+							Description: "AWS Region for the Customer Gateway.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"publicIP": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Specify the Internet-routable IP address for your gateway's external interface; the address must be static and may be behind a device performing network address translation (NAT).",
@@ -95,7 +102,7 @@ func schema_pkg_apis_awsvpn_v1alpha1_CustomerGatewaySpec(ref common.ReferenceCal
 						},
 					},
 				},
-				Required: []string{"name", "publicIP", "type"},
+				Required: []string{"name", "region", "publicIP", "type"},
 			},
 		},
 		Dependencies: []string{},

@@ -44,12 +44,16 @@ spec:
                 external interface; the address must be static and may be behind a
                 device performing network address translation (NAT).
               type: string
+            region:
+              description: AWS Region for the Customer Gateway.
+              type: string
             type:
               description: The type of VPN connection that this customer gateway supports
                 (ipsec.1).
               type: string
           required:
           - name
+          - region
           - publicIP
           - type
           type: object
