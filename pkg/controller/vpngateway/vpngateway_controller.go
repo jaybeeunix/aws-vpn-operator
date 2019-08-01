@@ -2,16 +2,17 @@ package vpngateway
 
 import (
 	"context"
+	"fmt"
 
 	awsvpnv1alpha1 "github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	// metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
-	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+	// "sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
@@ -19,10 +20,20 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-var log = logf.Log.WithName("controller_vpngateway")
+var (
+	log = logf.Log.WithName("controller_vpngateway")
+)
+
+const (
+	awsCredsSecretName      = "aws-vpn-operator-credentials"
+	awsCredsSecretIDKey     = "aws_access_key_id"
+	awsCredsSecretAccessKey = "aws_secret_access_key"
+)
 
 /**
 * USER ACTION REQUIRED: This is a scaffold file intended for the user to modify with their own Controller
@@ -103,62 +114,35 @@ func (r *ReconcileVpnGateway) Reconcile(request reconcile.Request) (reconcile.Re
 		return reconcile.Result{}, err
 	}
 
-	// Define a new Pod object
-	pod := newPodForCR(instance)
-
-	// Set VpnGateway instance as the owner and controller
-	if err := controllerutil.SetControllerReference(instance, pod, r.scheme); err != nil {
-		return reconcile.Result{}, err
-	}
-
-	// Check if this Pod already exists
-	found := &corev1.Pod{}
-	err = r.client.Get(context.TODO(), types.NamespacedName{Name: pod.Name, Namespace: pod.Namespace}, found)
-	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("Creating a new Pod", "Pod.Namespace", pod.Namespace, "Pod.Name", pod.Name)
-		err = r.client.Create(context.TODO(), pod)
-		if err != nil {
-			return reconcile.Result{}, err
-		}
-
-		// Pod created successfully - don't requeue
-		return reconcile.Result{}, nil
-	} else if err != nil {
-		return reconcile.Result{}, err
-	}
-
-	// Pod already exists - don't requeue
-	reqLogger.Info("Skip reconcile: Pod already exists", "Pod.Namespace", found.Namespace, "Pod.Name", found.Name)
 	return reconcile.Result{}, nil
 }
 
-func newEc2Client(kubeClient client.Client, namespace, region string) (*EC2, error) {
+func newEc2Client(kubeClient client.Client, namespace, region string) (*ec2.EC2, error) {
 	awsConfig := &aws.Config{Region: aws.String(region)}
 
-	secretName := "aws-vpn-operator-credentials"
-		secret := &corev1.Secret{}
-		err := kubeClient.Get(context.TODO(),
-			types.NamespacedName{
-				Name:      secretName,
-				Namespace: namespace,
-			},
-			secret)
-		if err != nil {
-			return nil, err
-		}
-		accessKeyID, ok := secret.Data[awsCredsSecretIDKey]
-		if !ok {
-			return nil, fmt.Errorf("AWS credentials secret %v did not contain key %v",
-				secretName, awsCredsSecretIDKey)
-		}
-		secretAccessKey, ok := secret.Data[awsCredsSecretAccessKey]
-		if !ok {
-			return nil, fmt.Errorf("AWS credentials secret %v did not contain key %v",
-				secretName, awsCredsSecretAccessKey)
-		}
+	secret := &corev1.Secret{}
+	err := kubeClient.Get(context.TODO(),
+		types.NamespacedName{
+			Name:      awsCredsSecretName,
+			Namespace: namespace,
+		},
+		secret)
+	if err != nil {
+		return nil, err
+	}
+	accessKeyID, ok := secret.Data[awsCredsSecretIDKey]
+	if !ok {
+		return nil, fmt.Errorf("AWS credentials secret %v did not contain key %v",
+			awsCredsSecretName, awsCredsSecretIDKey)
+	}
+	secretAccessKey, ok := secret.Data[awsCredsSecretAccessKey]
+	if !ok {
+		return nil, fmt.Errorf("AWS credentials secret %v did not contain key %v",
+			awsCredsSecretName, awsCredsSecretAccessKey)
+	}
 
-		awsConfig.Credentials = credentials.NewStaticCredentials(
-			string(accessKeyID), string(secretAccessKey), "")
+	awsConfig.Credentials = credentials.NewStaticCredentials(
+		string(accessKeyID), string(secretAccessKey), "")
 
 	// Otherwise default to relying on the IAM role of the masters where the actuator is running:
 	s, err := session.NewSession(awsConfig)
