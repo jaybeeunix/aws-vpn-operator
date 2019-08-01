@@ -168,7 +168,7 @@ func (r *ReconcileVpnGateway) Reconcile(request reconcile.Request) (reconcile.Re
 	default:
 		{
 			// Not sure what happened...should we pass the bad Phase up?
-			return reconcile.Result{RequeueAfter: time.Second * 5}, nil
+			return reconcile.Result{}, fmt.Errorf("unknown resource phase: %v", instance.Status.Phase)
 		}
 	}
 
