@@ -234,7 +234,29 @@ func schema_pkg_apis_awsvpn_v1alpha1_VpnGatewayStatus(ref common.ReferenceCallba
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Description: "VpnGatewayStatus defines the observed state of VpnGateway",
-				Properties:  map[string]spec.Schema{},
+				Properties: map[string]spec.Schema{
+					"phase": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Phase is the current status of the VPN Gateway",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"vpnGatewayID": {
+						SchemaProps: spec.SchemaProps{
+							Description: "VpnGatewayID is the AWS ID of the VPN Gateway object",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"vpcID": {
+						SchemaProps: spec.SchemaProps{
+							Description: "VpcID is the AWS ID of the VPC that the VPN Gateway is attempting to attach to",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
 			},
 		},
 		Dependencies: []string{},
