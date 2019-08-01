@@ -3,6 +3,7 @@ package vpngateway
 import (
 	"context"
 	"fmt"
+	"time"
 
 	awsvpnv1alpha1 "github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
@@ -117,6 +118,61 @@ func (r *ReconcileVpnGateway) Reconcile(request reconcile.Request) (reconcile.Re
 		return reconcile.Result{}, err
 	}
 
+	// New ec2Client
+	// TODO: lookup the region
+	ec2Client, err := newEc2Client(r.client, request.Namespace, "us-east-1")
+	if err != nil {
+		return reconcile.Result{}, err
+	}
+
+	// If "larval" state (or missing the VpnGatewayID), Create a new VpnGateway
+	if instance.Status.Phase == "" && instance.Status.VpnGatewayID == "" {
+		// Create the VPN GW
+		vpnType := "ipsec.1"
+		vpnGwOutput, err := ec2Client.CreateVpnGateway(&ec2.CreateVpnGatewayInput{
+			Type: &vpnType,
+		})
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+		instance.Status.VpnGatewayID = *vpnGwOutput.VpnGateway.VpnGatewayId
+		instance.Status.Phase = "Creating"
+		return reconcile.Result{RequeueAfter: time.Second * 5}, nil
+	}
+	// Handle the other Phases
+	switch instance.Status.Phase {
+	case "Creating":
+		{
+			// Check to see that the VpnGateway is in the available state
+			vpnGwOutput, err := ec2Client.DescribeVpnGateways(
+				&ec2.DescribeVpnGatewaysInput{
+					VpnGatewayIds: []*string{&instance.Status.VpnGatewayID},
+				})
+			if err != nil {
+				return reconcile.Result{}, err
+			}
+			// We asked for a specific VpnGw ID, so we should only have one
+			if len(vpnGwOutput.VpnGateways) != 1 ||
+				*vpnGwOutput.VpnGateways[0].State != ec2.VpnStateAvailable {
+				// The GW isn't ready (or is in some other bad state)
+				return reconcile.Result{RequeueAfter: time.Second * 5}, nil
+			}
+			// Looks good: Next
+			instance.Status.Phase = "Detached"
+			return reconcile.Result{RequeueAfter: time.Second * 5}, nil
+		}
+	case "Detached":
+		{
+			// TODO: cblecker's VPC attaching stuff goes here
+		}
+	default:
+		{
+			// Not sure what happened...should we pass the bad Phase up?
+			return reconcile.Result{}, fmt.Errorf("unknown resource phase: %v", instance.Status.Phase)
+		}
+	}
+
+	// All done
 	return reconcile.Result{}, nil
 }
 
