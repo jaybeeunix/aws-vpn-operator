@@ -11,9 +11,12 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
-		"github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.CustomerGateway":       schema_pkg_apis_awsvpn_v1alpha1_CustomerGateway(ref),
-		"github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.CustomerGatewaySpec":   schema_pkg_apis_awsvpn_v1alpha1_CustomerGatewaySpec(ref),
-		"github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.CustomerGatewayStatus": schema_pkg_apis_awsvpn_v1alpha1_CustomerGatewayStatus(ref),
+		"./pkg/apis/awsvpn/v1alpha1.CustomerGateway":       schema_pkg_apis_awsvpn_v1alpha1_CustomerGateway(ref),
+		"./pkg/apis/awsvpn/v1alpha1.CustomerGatewaySpec":   schema_pkg_apis_awsvpn_v1alpha1_CustomerGatewaySpec(ref),
+		"./pkg/apis/awsvpn/v1alpha1.CustomerGatewayStatus": schema_pkg_apis_awsvpn_v1alpha1_CustomerGatewayStatus(ref),
+		"./pkg/apis/awsvpn/v1alpha1.VpnGateway":            schema_pkg_apis_awsvpn_v1alpha1_VpnGateway(ref),
+		"./pkg/apis/awsvpn/v1alpha1.VpnGatewaySpec":        schema_pkg_apis_awsvpn_v1alpha1_VpnGatewaySpec(ref),
+		"./pkg/apis/awsvpn/v1alpha1.VpnGatewayStatus":      schema_pkg_apis_awsvpn_v1alpha1_VpnGatewayStatus(ref),
 	}
 }
 
@@ -44,19 +47,19 @@ func schema_pkg_apis_awsvpn_v1alpha1_CustomerGateway(ref common.ReferenceCallbac
 					},
 					"spec": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.CustomerGatewaySpec"),
+							Ref: ref("./pkg/apis/awsvpn/v1alpha1.CustomerGatewaySpec"),
 						},
 					},
 					"status": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.CustomerGatewayStatus"),
+							Ref: ref("./pkg/apis/awsvpn/v1alpha1.CustomerGatewayStatus"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.CustomerGatewaySpec", "github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.CustomerGatewayStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+			"./pkg/apis/awsvpn/v1alpha1.CustomerGatewaySpec", "./pkg/apis/awsvpn/v1alpha1.CustomerGatewayStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
 	}
 }
 
@@ -157,7 +160,7 @@ func schema_pkg_apis_awsvpn_v1alpha1_CustomerGatewayStatus(ref common.ReferenceC
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Ref: ref("github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.Tag"),
+										Ref: ref("./pkg/apis/awsvpn/v1alpha1.Tag"),
 									},
 								},
 							},
@@ -167,6 +170,73 @@ func schema_pkg_apis_awsvpn_v1alpha1_CustomerGatewayStatus(ref common.ReferenceC
 			},
 		},
 		Dependencies: []string{
-			"github.com/jaybeeunix/aws-vpn-operator/pkg/apis/awsvpn/v1alpha1.Tag"},
+			"./pkg/apis/awsvpn/v1alpha1.Tag"},
+	}
+}
+
+func schema_pkg_apis_awsvpn_v1alpha1_VpnGateway(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "VpnGateway is the Schema for the vpngateways API",
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"),
+						},
+					},
+					"spec": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("./pkg/apis/awsvpn/v1alpha1.VpnGatewaySpec"),
+						},
+					},
+					"status": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("./pkg/apis/awsvpn/v1alpha1.VpnGatewayStatus"),
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"./pkg/apis/awsvpn/v1alpha1.VpnGatewaySpec", "./pkg/apis/awsvpn/v1alpha1.VpnGatewayStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+	}
+}
+
+func schema_pkg_apis_awsvpn_v1alpha1_VpnGatewaySpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "VpnGatewaySpec defines the desired state of VpnGateway",
+				Properties:  map[string]spec.Schema{},
+			},
+		},
+		Dependencies: []string{},
+	}
+}
+
+func schema_pkg_apis_awsvpn_v1alpha1_VpnGatewayStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "VpnGatewayStatus defines the observed state of VpnGateway",
+				Properties:  map[string]spec.Schema{},
+			},
+		},
+		Dependencies: []string{},
 	}
 }
