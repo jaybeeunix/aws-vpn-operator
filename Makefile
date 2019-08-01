@@ -2,14 +2,9 @@ TESTTARGETS := $(shell go list -e ./... | egrep -v "/(vendor)/")
 # ex, -v
 TESTOPTS :=
 
+GO111MODULE?=on
+
 default: gobuild
-
-Gopkg.lock:
-	rm -f Gopkg.toml
-	dep init
-
-vendor: Gopkg.lock
-	dep ensure -v
 
 .PHONY: gocheck
 gocheck:
@@ -21,6 +16,6 @@ gotest:
 	go test $(TESTOPTS) $(TESTTARGETS)
 
 .PHONY: gobuild
-gobuild: vendor gocheck gotest
+gobuild: gocheck gotest
 	go build $(shell go list -f '{{ .Dir }}' ./... )
 
